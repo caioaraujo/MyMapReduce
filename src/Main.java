@@ -1,3 +1,4 @@
+import com.google.gson.Gson;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -8,17 +9,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.StringTokenizer;
+import java.util.UUID;
 
 public class Main {
 
-    public static class TokenizerMapper
-            extends Mapper<Object, Text, Text, IntWritable> {
-
-        private Text word = new Text();
+    public static class InputDataMapper
+            extends Mapper<Object, Text, Text, Text> {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            StringTokenizer itr = new StringTokenizer(value.toString());
-
             final String[] input = value.toString().split(";");
 
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -28,7 +26,12 @@ public class Main {
                     new BigDecimal(input[3]), input[4], input[5]
             );
 
-            #context.write();
+            final Gson gson = new Gson();
+            final Text jsonCompromise = new Text(gson.toJson(compromise));
+
+            final Text uuid = new Text(UUID.randomUUID().toString());
+
+            context.write(uuid, jsonCompromise);
         }
     }
 
