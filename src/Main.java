@@ -1,26 +1,26 @@
+import com.google.gson.Gson;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.CreateCollectionOptions;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.bson.Document;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.StringTokenizer;
+import java.util.UUID;
 
 public class Main {
 
-    public static class CompromiseMapper
-            extends Mapper<Object, Text, Text, IntWritable> {
-
-        private Text word = new Text();
+    public static class InputDataMapper
+            extends Mapper<Object, Text, Text, Text> {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            StringTokenizer itr = new StringTokenizer(value.toString());
-
             final String[] input = value.toString().split(";");
 
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -30,7 +30,12 @@ public class Main {
                     new BigDecimal(input[3]), input[4], input[5]
             );
 
-            //context.write();
+            final Gson gson = new Gson();
+            final Text jsonCompromise = new Text(gson.toJson(compromise));
+
+            final Text uuid = new Text(UUID.randomUUID().toString());
+
+            context.write(uuid, jsonCompromise);
         }
     }
 
@@ -39,17 +44,32 @@ public class Main {
         // Dado um arquivo como entrada, interpreta o mesmo
         // para processar suas linhas e gerar as entradas
 
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "bank compromise");
+        job.setJarByClass(Main.class);
+        job.setMapperClass(InputDataMapper.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(String.class);
+
         // Test mongo connection
-        Main.connectToMongoDB();
+        Main.connectToMongoDB(null);
 
     }
 
-    private static void connectToMongoDB(Text compromiseJson) {
+    private static void connectToMongoDB(Document compromiseJson) {
         MongoClient mongoClient = new MongoClient();
 
         MongoDatabase database = mongoClient.getDatabase("compromise");
 
-        database.createCollection("bankCompromises", new CreateCollectionOptions());
+        MongoCollection<Document> bankCompromissesCollection = database.getCollection("bankCompromises");
+
+        // FIXME: aparentemente essa uma collection eh criada ao acessar. Testar.
+//        if (bankCompromissesCollection == null) {
+//            System.out.print("Criando colecao bankCompromises no mongoDb");
+//            database.createCollection("bankCompromises", new CreateCollectionOptions());
+//        }
+
+        bankCompromissesCollection.insertOne(compromiseJson);
 
         System.out.print("AAA");
     }
