@@ -5,6 +5,7 @@ import com.mongodb.client.MongoDatabase;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.bson.Document;
@@ -39,6 +40,23 @@ public class Main {
         }
     }
 
+    public static class InputDataReducer
+            extends Reducer<Text,IntWritable,Text,IntWritable> {
+
+        public void reduce(Text key, Iterable<IntWritable> values, Context context)
+                throws IOException, InterruptedException {
+
+            Main.connectToMongoDB(null);
+
+            for (Text : values) {
+                //Verificar se é possível abrir uma unica conexxao e usar o loop para insercao
+                //e fechar a conexao no final do loop.
+            }
+
+        }
+
+    }
+
     public static void main(String[] args) throws Exception {
 
         // Dado um arquivo como entrada, interpreta o mesmo
@@ -50,10 +68,6 @@ public class Main {
         job.setMapperClass(InputDataMapper.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(String.class);
-
-        // Test mongo connection
-        Main.connectToMongoDB(null);
-
     }
 
     private static void connectToMongoDB(Document compromiseJson) {
