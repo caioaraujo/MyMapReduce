@@ -1,3 +1,5 @@
+package mapreduce;
+
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;

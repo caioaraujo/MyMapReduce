@@ -1,3 +1,5 @@
+package mapreduce;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -9,8 +11,6 @@ public class Compromise {
     private BigDecimal amount;
     private String payerName;
     private String paymentDescription;
-
-    public Compromise() {}
 
     public Compromise(final String bank, final String payeeName, final LocalDate dueDate, final BigDecimal amount,
                       final String payerName, final String paymentDescription) {
