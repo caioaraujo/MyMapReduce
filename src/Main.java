@@ -43,14 +43,11 @@ public class Main {
     public static class InputDataReducer
             extends Reducer<Text,IntWritable,Text,IntWritable> {
 
-        public void reduce(Text key, Iterable<IntWritable> values, Context context)
+        public void reduce(Text key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
 
-            Main.connectToMongoDB(null);
-
-            for (Text : values) {
-                //Verificar se é possível abrir uma unica conexxao e usar o loop para insercao
-                //e fechar a conexao no final do loop.
+            for (Text text: values) {
+                Main.connectToMongoDB(text);
             }
 
         }
@@ -66,6 +63,7 @@ public class Main {
         Job job = Job.getInstance(conf, "bank compromise");
         job.setJarByClass(Main.class);
         job.setMapperClass(InputDataMapper.class);
+        job.setReducerClass(InputDataReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(String.class);
     }
@@ -76,12 +74,6 @@ public class Main {
         MongoDatabase database = mongoClient.getDatabase("compromise");
 
         MongoCollection<Document> bankCompromissesCollection = database.getCollection("bankCompromises");
-
-        // FIXME: aparentemente essa uma collection eh criada ao acessar. Testar.
-//        if (bankCompromissesCollection == null) {
-//            System.out.print("Criando colecao bankCompromises no mongoDb");
-//            database.createCollection("bankCompromises", new CreateCollectionOptions());
-//        }
 
         bankCompromissesCollection.insertOne(compromiseJson);
 
