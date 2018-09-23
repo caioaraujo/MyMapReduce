@@ -32,7 +32,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>pos.mapreduce.sample.Word</mainClass>
+							<mainClass>Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
