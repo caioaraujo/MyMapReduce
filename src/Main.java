@@ -47,7 +47,7 @@ public class Main {
                 throws IOException, InterruptedException {
 
             for (Text text: values) {
-                Main.connectToMongoDB(text);
+                Main.insertInMongoDB(text);
             }
 
         }
@@ -68,15 +68,18 @@ public class Main {
         job.setOutputValueClass(String.class);
     }
 
-    private static void connectToMongoDB(Document compromiseJson) {
+    private static void insertInMongoDB(Document compromiseJson) {
         MongoClient mongoClient = new MongoClient();
 
+        // Connect to mongo database
         MongoDatabase database = mongoClient.getDatabase("compromise");
 
+        // Get (or create) the bankCompromises document
         MongoCollection<Document> bankCompromissesCollection = database.getCollection("bankCompromises");
 
+        // Insert the compromise data in document
         bankCompromissesCollection.insertOne(compromiseJson);
 
-        System.out.print("AAA");
+        System.out.print("All data was saved successfully");
     }
 }
