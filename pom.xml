@@ -15,18 +15,6 @@
 		<mapreduce.version>3.0.3</mapreduce.version>
 	</properties>
 
-	<distributionManagement>
-
-		<repository>
-			<uniqueVersion>false</uniqueVersion>
-			<id>corp1</id>
-			<name>Corporate Repository</name>
-			<url>https://repo.maven.apache.org/maven2/</url>
-			<layout>default</layout>
-		</repository>
-
-	</distributionManagement>
-
 	<build>
 		<plugins>
 			<plugin>
