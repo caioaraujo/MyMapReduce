@@ -5,10 +5,9 @@ import com.mongodb.client.MongoDatabase;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.bson.BasicBSONObject;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.bson.Document;
 
 import java.io.IOException;
