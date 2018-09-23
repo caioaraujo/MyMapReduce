@@ -8,6 +8,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.bson.BasicBSONObject;
 import org.bson.Document;
 
 import java.io.IOException;
@@ -47,9 +48,10 @@ public class Main {
                 throws IOException, InterruptedException {
 
             for (Text text: values) {
-                Main.insertInMongoDB(text);
+                final Document compromiseDocument = new Document();
+                compromiseDocument.append(key.toString(), text.toString());
+                Main.insertInMongoDB(compromiseDocument);
             }
-
         }
 
     }
